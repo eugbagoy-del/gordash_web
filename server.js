@@ -1,6 +1,6 @@
 const express = require('express');
 const http = require('http');
-const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require("@whiskeysockets/baileys");
+const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require("@ostyado/baileys");
 const pino = require("pino");
 const fs = require("fs");
 const path = require("path");
