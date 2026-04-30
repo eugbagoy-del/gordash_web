@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Gordash Bot</title>
+
+    <!-- Font Awesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: #0f172a;
+            padding-bottom: 80px;
+            line-height: 1.5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+            color: white;
+            padding: 24px 20px 22px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.25);
+        }
+
+        .header h1 {
+            font-size: 1.65rem;
+            font-weight: 700;
+            letter-spacing: -0.6px;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.92;
+            margin-top: 4px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            background: rgba(255,255,255,0.95);
+            color: #166534;
+            font-size: 0.78rem;
+            font-weight: 700;
+            border-radius: 9999px;
+            margin-top: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 16px 16px 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .radio-option {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .radio-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px 12px;
+            text-align: center;
+            transition: all 0.25s ease;
+        }
+
+        .radio-option input:checked + .radio-card {
+            border-color: var(--primary);
+            background: #eff6ff;
+            transform: translateY(-4px);
+        }
+
+        .radio-icon {
+            font-size: 2.1rem;
+            margin-bottom: 10px;
+            color: #334155;
+        }
+
+        .radio-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.96);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .sender-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sender-number {
+            font-weight: 700;
+            font-size: 0.97rem;
+            font-family: monospace;
+        }
+
+        .sender-status {
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .sender-status.paired { color: #10b981; }
+        .sender-status.pending { color: #f59e0b; }
+        .sender-status.error { color: #ef4444; }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            background: white;
+            border-radius: 12px;
+            font-size: 1.35rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin-left: 8px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            padding: 12px 0 18px;
+            box-shadow: 0 -6px 30px rgba(0, 0, 0, 0.12);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: #94a3b8;
+            font-size: 0.73rem;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 1.65rem;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 95px;
+            left: 20px;
+            right: 20px;
+            background: #1e293b;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 16px;
+            font-size: 0.92rem;
+            text-align: center;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+            z-index: 2000;
+            display: none;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        .toast.info { background: #2563eb; }
+
+        .empty {
+            text-align: center;
+            padding: 45px 20px;
+            color: #94a3b8;
+            font-size: 0.92rem;
+        }
+
+        .log-item {
+            padding: 13px 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 0.79rem;
+            font-family: ui-monospace, monospace;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 7px;
+            background: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-top: 18px;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #2563eb, #60a5fa);
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .code-box {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            color: #0369a1;
+            padding: 12px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-weight: 700;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        /* Login & Register Overlay */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 32px;
+            padding: 32px 24px;
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            animation: fadeInScale 0.3s ease;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .auth-card h2 {
+            color: #1e40af;
+            margin-bottom: 24px;
+            font-size: 1.8rem;
+        }
+
+        .auth-card input {
+            margin-bottom: 16px;
+        }
+
+        .auth-switch {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        .auth-switch span {
+            color: #2563eb;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 12px 6px 16px;
+            border-radius: 40px;
+        }
+
+        .user-info i {
+            font-size: 1rem;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.35);
+        }
+
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-flex">
+            <div>
+                <h1><i class="fa-solid fa-bolt"></i> GORDASH BOT</h1>
+                <p>Multi-Sender Payload System</p>
+            </div>
+            <div id="userInfoArea" class="user-info" style="display: none;">
+                <i class="fa-solid fa-user-circle"></i>
+                <span id="currentUsername"></span>
+                <button class="logout-btn" onclick="logout()"><i class="fa-solid fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+        <div class="status" id="statusBadge">● Ready</div>
+    </div>
+
+    <div class="container">
+        <!-- HOME PAGE -->
+        <div id="homePage" class="page active">
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-bullseye"></i> TARGET</div>
+                <input type="tel" id="targetNumber" placeholder="6281234567890">
+
+                <div class="card-title" style="margin-top: 22px;"><i class="fa-solid fa-swords"></i> METHOD</div>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="method" value="force-close" checked>
+                        <div class="radio-card">
+                            <div class="radio-icon"><i class="fa-solid fa-skull"></i></div>
+                            <div class="radio-name">FC</div>
+                        </div>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="method" value="delay-easy">
+                        <div class="radio-card">
+                            <div class="radio-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                            <div class="radio-name">Delay</div>
+                        </div>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="method" value="blank-ui">
+                        <div class="radio-card">
+                            <div class="radio-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                            <div class="radio-name">Blank UI</div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="card-title" style="margin-top: 22px;"><i class="fa-solid fa-arrow-up-1-9"></i> JUMLAH (max 1000)</div>
+                <input type="number" id="messageCount" value="500" min="1" max="1000">
+
+                <button class="btn btn-primary" onclick="executeAttack()">
+                    <i class="fa-solid fa-rocket"></i> EXECUTE ATTACK
+                </button>
+
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-list"></i> ACTIVITY LOG</div>
+                <div id="logContainer" style="max-height: 260px; overflow-y: auto;">
+                    <div class="empty">Belum ada aktivitas</div>
+                </div>
+                <button class="btn btn-secondary" onclick="clearLog()" style="margin-top: 12px;">
+                    <i class="fa-solid fa-trash"></i> Clear Log
+                </button>
+            </div>
+        </div>
+
+        <!-- SENDER PAGE -->
+        <div id="senderPage" class="page">
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-plus"></i> TAMBAH SENDER</div>
+                <input type="tel" id="senderNumber" placeholder="6281234567890">
+                <button class="btn btn-primary" onclick="addSender()">
+                    <i class="fa-solid fa-qrcode"></i> Minta Kode Pairing
+                </button>
+                <p style="font-size: 0.74rem; color: #64748b; margin-top: 14px; text-align: center;">
+                    Masukkan kode yang muncul di WhatsApp → Perangkat Tertaut → Tautkan Perangkat
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-users"></i> DAFTAR SENDER <span id="senderCount">(0)</span></div>
+                <div id="senderList">
+                    <div class="empty">Belum ada sender</div>
+                </div>
+                <button class="btn btn-danger" onclick="removeAllSenders()" style="margin-top: 12px;">
+                    <i class="fa-solid fa-trash"></i> Hapus Semua
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchPage('home')">
+            <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
+            <div class="nav-label">Home</div>
+        </button>
+        <button class="nav-item" onclick="switchPage('sender')">
+            <div class="nav-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="nav-label">Sender</div>
+        </button>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- AUTH OVERLAY -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-card">
+            <h2><i class="fa-solid fa-dragon"></i> Gordash</h2>
+            <div id="authForm">
+                <input type="text" id="loginUsername" placeholder="Username" autocomplete="off">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <button class="btn btn-primary" onclick="doLogin()">Login</button>
+                <div class="auth-switch">
+                    Belum punya akun? <span onclick="showRegister()">Register</span>
+                </div>
+            </div>
+            <div id="regForm" style="display: none;">
+                <input type="text" id="regUsername" placeholder="Username">
+                <input type="password" id="regPassword" placeholder="Password">
+                <button class="btn btn-primary" onclick="doRegister()">Register</button>
+                <div class="auth-switch">
+                    Sudah punya akun? <span onclick="showLogin()">Login</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== AUTH SYSTEM ====================
+        let currentUser = null;
+
+        function getUsers() {
+            const users = localStorage.getItem('gordash_users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('gordash_users', JSON.stringify(users));
+        }
+
+        function doRegister() {
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            if (!username || !password) {
+                showToast('Username dan password tidak boleh kosong!', 'error');
+                return;
+            }
+            const users = getUsers();
+            if (users.find(u => u.username === username)) {
+                showToast('Username sudah terdaftar!', 'error');
+                return;
+            }
+            users.push({ username, password });
+            saveUsers(users);
+            showToast('Registrasi berhasil! Silakan login.', 'success');
+            showLogin();
+            document.getElementById('regUsername').value = '';
+            document.getElementById('regPassword').value = '';
+        }
+
+        function doLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            if (!username || !password) {
+                showToast('Isi username dan password!', 'error');
+                return;
+            }
+            const users = getUsers();
+            const user = users.find(u => u.username === username && u.password === password);
+            if (user) {
+                currentUser = username;
+                localStorage.setItem('gordash_current_user', username);
+                document.getElementById('authOverlay').style.display = 'none';
+                document.getElementById('userInfoArea').style.display = 'flex';
+                document.getElementById('currentUsername').innerText = username;
+                showToast(`Selamat datang, ${username}!`, 'success');
+                loadSenders(); // load sender sesuai user
+            } else {
+                showToast('Username atau password salah!', 'error');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('gordash_current_user');
+            // Reset semua data sender di local storage untuk user ini? Tidak, biarkan tetap ada per user
+            // Tapi kita reload halaman agar tidak ada data tersisa di memori
+            location.reload();
+        }
+
+        function showRegister() {
+            document.getElementById('authForm').style.display = 'none';
+            document.getElementById('regForm').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('authForm').style.display = 'block';
+            document.getElementById('regForm').style.display = 'none';
+        }
+
+        function checkAutoLogin() {
+            const savedUser = localStorage.getItem('gordash_current_user');
+            if (savedUser) {
+                const users = getUsers();
+                if (users.find(u => u.username === savedUser)) {
+                    currentUser = savedUser;
+                    document.getElementById('authOverlay').style.display = 'none';
+                    document.getElementById('userInfoArea').style.display = 'flex';
+                    document.getElementById('currentUsername').innerText = savedUser;
+                    return true;
+                } else {
+                    localStorage.removeItem('gordash_current_user');
+                }
+            }
+            return false;
+        }
+
+        // ============ SEMUA FUNGSI ASLI (dengan storage per user) ============
+        let senders = [];
+
+        function getStorageKey() {
+            return `gordash_senders_${currentUser}`;
+        }
+
+        function loadSenders() {
+            if (!currentUser) return;
+            const saved = localStorage.getItem(getStorageKey());
+            if (saved) {
+                senders = JSON.parse(saved);
+                renderSenders();
+                saveSenders();
+            } else {
+                senders = [];
+                renderSenders();
+                saveSenders();
+            }
+        }
+
+        function saveSenders() {
+            if (!currentUser) return;
+            localStorage.setItem(getStorageKey(), JSON.stringify(senders));
+            document.getElementById('senderCount').innerHTML = `(${senders.length})`;
+        }
+
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `toast ${type}`;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        function addLog(msg, isError = false) {
+            const container = document.getElementById('logContainer');
+            if (container.querySelector('.empty')) container.innerHTML = '';
+            const div = document.createElement('div');
+            div.className = 'log-item';
+            div.style.borderLeftColor = isError ? '#ef4444' : '#3b82f6';
+            div.innerHTML = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            container.insertBefore(div, container.firstChild);
+
+            while (container.children.length > 50) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        function clearLog() {
+            document.getElementById('logContainer').innerHTML = '<div class="empty">Belum ada aktivitas</div>';
+            showToast('Log dibersihkan', 'info');
+        }
+
+        function renderSenders() {
+            const container = document.getElementById('senderList');
+            if (senders.length === 0) {
+                container.innerHTML = '<div class="empty">Belum ada sender</div>';
+                return;
+            }
+
+            container.innerHTML = senders.map((s, i) => `
+                <div class="sender-item">
+                    <div style="flex:1">
+                        <div class="sender-number">📱 ${s.number}</div>
+                        <div class="sender-status ${s.status}">
+                            ${s.status === 'paired' ? '✅ Terhubung' : s.status === 'pending' ? '⏳ Meminta kode...' : '❌ Gagal'}
+                        </div>
+                        ${s.code ? `<div class="code-box">🔑 Kode: ${s.code}</div>` : ''}
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        ${s.status !== 'paired' && s.status !== 'pending' ?
+                            `<button class="icon-btn" onclick="requestPairing(${i})" title="Minta kode lagi"><i class="fa-solid fa-rotate"></i></button>` : ''}
+                        <button class="icon-btn" onclick="removeSender(${i})" style="color:#ef4444;" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function addSender() {
+            let num = document.getElementById('senderNumber').value.trim();
+            if (!num) return showToast('Masukkan nomor!', 'error');
+
+            num = num.replace(/\D/g, '');
+            if (num.startsWith('0')) num = '62' + num.substring(1);
+            if (!num.startsWith('62')) num = '62' + num;
+
+            if (senders.some(s => s.number === num)) {
+                return showToast('Sender sudah ada!', 'error');
+            }
+
+            senders.push({ number: num, status: 'pending', code: null });
+            renderSenders();
+            saveSenders();
+            await requestPairing(senders.length - 1);
+            document.getElementById('senderNumber').value = '';
+        }
+
+        async function requestPairing(index) {
+            const sender = senders[index];
+            if (!sender) return;
+
+            sender.status = 'pending';
+            renderSenders();
+            saveSenders();
+
+            showToast(`Meminta kode untuk ${sender.number}...`, 'info');
+            addLog(`📱 Meminta kode pairing untuk ${sender.number}`);
+
+            try {
+                const res = await fetch('/api/pairing', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber: sender.number })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    sender.status = 'paired';
+                    sender.code = data.code;
+                    showToast(`✅ Kode: ${data.code}`, 'success');
+                    addLog(`✅ ${sender.number} - Kode pairing: ${data.code}`);
+                } else {
+                    sender.status = 'error';
+                    showToast(`❌ Gagal: ${data.error}`, 'error');
+                    addLog(`❌ ${sender.number} gagal pairing: ${data.error}`, true);
+                }
+            } catch (e) {
+                sender.status = 'error';
+                showToast(`Error: ${e.message}`, 'error');
+                addLog(`❌ Error: ${e.message}`, true);
+            }
+
+            renderSenders();
+            saveSenders();
+        }
+
+        async function removeSender(index) {
+            const sender = senders[index];
+            if (confirm(`Hapus sender ${sender.number}?`)) {
+                try {
+                    await fetch('/api/remove-sender', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phoneNumber: sender.number })
+                    });
+                    addLog(`🗑️ Sender ${sender.number} dihapus`);
+                } catch(e) {
+                    console.error(e);
+                }
+
+                senders.splice(index, 1);
+                renderSenders();
+                saveSenders();
+                showToast('Sender dihapus', 'info');
+            }
+        }
+
+        async function removeAllSenders() {
+            if (!confirm('Yakin ingin menghapus SEMUA sender? Aksi ini tidak bisa dibatalkan!')) return;
+
+            for (const sender of senders) {
+                try {
+                    await fetch('/api/remove-sender', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phoneNumber: sender.number })
+                    });
+                } catch(e) {}
+            }
+
+            senders = [];
+            renderSenders();
+            saveSenders();
+            showToast('Semua sender telah dihapus', 'success');
+            addLog('🗑️ Semua sender dihapus');
+        }
+
+        async function executeAttack() {
+            const target = document.getElementById('targetNumber').value.trim();
+            const count = parseInt(document.getElementById('messageCount').value);
+
+            if (!target) return showToast('Masukkan nomor target!', 'error');
+            if (isNaN(count) || count < 1 || count > 1000) return showToast('Jumlah pesan harus 1-1000!', 'error');
+
+            const activeSenders = senders.filter(s => s.status === 'paired');
+            if (activeSenders.length === 0) {
+                return showToast('Tidak ada sender yang terhubung! Silakan tambah sender terlebih dahulu.', 'error');
+            }
+
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            progressBar.style.display = 'block';
+            progressFill.style.width = '0%';
+
+            showToast(`Menyerang ${target} dengan ${activeSenders.length} sender...`, 'info');
+            addLog(`🚀 START ATTACK → Target: ${target} | Jumlah: ${count}x | Sender: ${activeSenders.length}`);
+
+            try {
+                const res = await fetch('/api/attack', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        targetNumber: target,
+                        messageCount: count,
+                        senders: activeSenders.map(s => s.number)
+                    })
+                });
+                const data = await res.json();
+
+                progressFill.style.width = '100%';
+                setTimeout(() => { progressBar.style.display = 'none'; }, 1200);
+
+                if (data.success) {
+                    showToast(`✅ Selesai! ${data.totalSent} pesan terkirim`, 'success');
+                    addLog(`✅ ATTACK COMPLETE → ${data.totalSent} pesan dari ${data.sendersUsed} sender`);
+                } else {
+                    showToast(`❌ Gagal: ${data.error}`, 'error');
+                    addLog(`❌ Attack gagal: ${data.error}`, true);
+                }
+            } catch (e) {
+                progressBar.style.display = 'none';
+                showToast(`Error: ${e.message}`, 'error');
+                addLog(`❌ Error: ${e.message}`, true);
+            }
+        }
+
+        function switchPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`${page}Page`).classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            if (page === 'home') {
+                document.querySelectorAll('.nav-item')[0].classList.add('active');
+            } else {
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
+            }
+        }
+
+        async function checkStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                const badge = document.getElementById('statusBadge');
+                if (data.activeSenders > 0) {
+                    badge.innerHTML = `● ${data.activeSenders} Sender Aktif`;
+                    badge.style.background = '#dcfce7';
+                    badge.style.color = '#166534';
+                } else {
+                    badge.innerHTML = '● Tidak Ada Sender';
+                    badge.style.background = '#fee2e2';
+                    badge.style.color = '#991b1b';
+                }
+            } catch(e) {
+                console.error('Status check failed:', e);
+            }
+        }
+
+        // Initialisasi
+        if (!checkAutoLogin()) {
+            document.getElementById('authOverlay').style.display = 'flex';
+        } else {
+            loadSenders();
+        }
+        checkStatus();
+        setInterval(checkStatus, 5000);
+    </script>
+</body>
+</html>
