@@ -1,0 +1,19 @@
+{
+  "name": "tes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@ostyado/baileys": "^2.0.3",
+    "express": "^5.2.1",
+    "pino": "^10.3.1"
+  }
+}
